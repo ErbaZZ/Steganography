@@ -19,6 +19,7 @@ def int2bytes(i):
     n = len(hex_string)
     return binascii.unhexlify(hex_string.zfill(n + (n & 1)))
 
+
 #   TODO: Improved data hiding algorithm for longer text
 #       - Use all RGB Channels
 #       - Use second, third, forth least significant bits for longer input?
@@ -26,6 +27,7 @@ def int2bytes(i):
 #       - Other
 
 def encode(plaintext, image):
+    # convert plain text to the binary format
     text_bin = text_to_bits(plaintext)
     print(text_bin)
     text_size = len(text_bin)
@@ -37,10 +39,12 @@ def encode(plaintext, image):
         for y in range(0, image.y):
             pix_bin = bin(pixels[x, y][0])
             if count < text_size:
+                # replace the last bit of the target pixel (red channel) with the data bit
                 new_pixel = (int(pix_bin[:-1] + text_bin[count], 2), pixels[x, y][1], pixels[x, y][2])
                 count = count + 1
                 image.putpixel((x, y), new_pixel)
             else:
+                # replace the last bit of the target pixel (red channel) with 0
                 new_pixel = (int(pix_bin[:-1] + '0', 2), pixels[x, y][1], pixels[x, y][2])
                 image.putpixel((x, y), new_pixel)
     image.save('new.png')
@@ -55,17 +59,21 @@ def decode(image):
     pixels = image.load()
     for x in range(0, image.x):
         for y in range(0, image.y):
+            # append data from the image with the last bit of the red channel
             text_ += bin(pixels[x, y][0])[-1:]
 
     for x in range(0, len(text_), 8):
+        # keep appending data bit until zeroes are found
         char_bin = text_[x:x + 8]
         if char_bin != '00000000':
             decoded_text += char_bin
         else:
             break
+    # convert data bit to plain text
     decoded_text = text_from_bits(decoded_text)
     print(decoded_text)
     return decoded_text
+
 
 #   TODO: Accept CLI arguments
 #       1) python steganography.py -e <plaintext> <raw image filename> <encoded image filename>
