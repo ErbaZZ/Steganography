@@ -37,16 +37,19 @@ def encode(plaintext, image):
     pixels = image.load()
     for x in range(0, image.x):
         for y in range(0, image.y):
-            pix_bin = bin(pixels[x, y][0])
-            if count < text_size:
-                # replace the last bit of the target pixel (red channel) with the data bit
-                new_pixel = (int(pix_bin[:-1] + text_bin[count], 2), pixels[x, y][1], pixels[x, y][2])
-                count = count + 1
-                image.putpixel((x, y), new_pixel)
-            else:
-                # replace the last bit of the target pixel (red channel) with 0
-                new_pixel = (int(pix_bin[:-1] + '0', 2), pixels[x, y][1], pixels[x, y][2])
-                image.putpixel((x, y), new_pixel)
+            i = 0
+            colors = [0] * 3
+            for channel in pixels[x, y]:
+                pix_bin = bin(channel)
+                if count < text_size:
+                    # replace the last bit of the target pixel with the data bit
+                    colors[i] = int(pix_bin[:-1] + text_bin[count], 2)
+                    count = count + 1
+                else:
+                    # replace the last bit of the target pixel with 0
+                    colors[i] = int(pix_bin[:-1] + '0', 2)
+                i += 1
+            image.putpixel((x, y), tuple(colors))
     image.save('new.png')
     return
 
@@ -59,8 +62,9 @@ def decode(image):
     pixels = image.load()
     for x in range(0, image.x):
         for y in range(0, image.y):
-            # append data from the image with the last bit of the red channel
-            text_ += bin(pixels[x, y][0])[-1:]
+            # append data from the image with the last bit of each color channel
+            for channel in pixels[x, y]:
+                text_ += bin(channel)[-1:]
 
     for x in range(0, len(text_), 8):
         # keep appending data bit until zeroes are found
@@ -84,8 +88,8 @@ def decode(image):
 #       1) Check image file extension to be only .png and .bmp
 #       2) Show warning and instruction when invalid argument pattern is detected
 
-text = "Hello World!"
-# img = Image.open('lena.png', 'r')
-# encode(text, img)
+text = "Hello World! This is the test of Steganography program."
+img = Image.open('lena.png', 'r')
+encode(text, img)
 new = Image.open('new.png', 'r')
 decode(new)
