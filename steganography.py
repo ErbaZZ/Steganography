@@ -21,7 +21,6 @@ def int2bytes(i):
 
 
 #   TODO: Improved data hiding algorithm for longer text
-#       - Use all RGB Channels
 #       - Use second, third, forth least significant bits for longer input?
 #       - Encode + decode input to accommodate longer input?
 #       - Other
