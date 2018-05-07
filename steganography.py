@@ -19,6 +19,11 @@ def int2bytes(i):
     n = len(hex_string)
     return binascii.unhexlify(hex_string.zfill(n + (n & 1)))
 
+#   TODO: Improved data hiding algorithm for longer text
+#       - Use all RGB Channels
+#       - Use second, third, forth least significant bits for longer input?
+#       - Encode + decode input to accommodate longer input?
+#       - Other
 
 def encode(plaintext, image):
     text_bin = text_to_bits(plaintext)
@@ -62,6 +67,14 @@ def decode(image):
     print(decoded_text)
     return decoded_text
 
+#   TODO: Accept CLI arguments
+#       1) python steganography.py -e <plaintext> <raw image filename> <encoded image filename>
+#       2) python steganography.py -e -f <plaintext filename> <raw image filename> <encoded image filename>
+#       3) python steganography.py -d <encoded image filename>                                                  # Print output text to console
+#       4) python steganography.py -d -f <encoded image filename> <output text filename>                        # Save output to file
+#   Extra:
+#       1) Check image file extension to be only .png and .bmp
+#       2) Show warning and instruction when invalid argument pattern is detected
 
 text = "Hello World!"
 # img = Image.open('lena.png', 'r')
