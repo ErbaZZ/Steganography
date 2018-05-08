@@ -70,7 +70,7 @@ def decode(image):
                 text_ += bin(channel)[-replace_bits:]
 
     for x in range(0, len(text_), 8):
-        # keep appending data bit until zeroes are found
+        # keep appending data bits until zeroes are found
         char_bin = text_[x:x + 8]
         if char_bin != '00000000':
             decoded_text += char_bin
