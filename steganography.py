@@ -2,6 +2,8 @@ import binascii
 
 from PIL import Image
 
+replace_bits = 1  # must be less than 8 and not too high
+
 
 # Functions from https://stackoverflow.com/questions/7396849/convert-binary-to-ascii-and-vice-versa
 def text_to_bits(plaintext, encoding='utf-8', errors='surrogatepass'):
@@ -11,17 +13,16 @@ def text_to_bits(plaintext, encoding='utf-8', errors='surrogatepass'):
 
 def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):
     n = int(bits, 2)
-    return int2bytes(n).decode(encoding, errors)
+    return int_to_bytes(n).decode(encoding, errors)
 
 
-def int2bytes(i):
+def int_to_bytes(i):
     hex_string = '%x' % i
     n = len(hex_string)
     return binascii.unhexlify(hex_string.zfill(n + (n & 1)))
 
 
 #   TODO: Improved data hiding algorithm for longer text
-#       - Use second, third, forth least significant bits for longer input?
 #       - Encode + decode input to accommodate longer input?
 #       - Other
 
@@ -41,12 +42,15 @@ def encode(plaintext, image):
             for channel in pixels[x, y]:
                 pix_bin = bin(channel)
                 if count < text_size:
-                    # replace the last bit of the target pixel with the data bit
-                    colors[i] = int(pix_bin[:-1] + text_bin[count], 2)
-                    count = count + 1
+                    # replace the last bits of the target pixel with the data bit
+                    data_bits = ''
+                    for j in range(0, replace_bits):
+                        data_bits += text_bin[count] if count < text_size else '0'
+                        count += 1
+                    colors[i] = int(pix_bin[:-replace_bits] + data_bits, 2)
                 else:
-                    # replace the last bit of the target pixel with 0
-                    colors[i] = int(pix_bin[:-1] + '0', 2)
+                    # replace the last bits of the target pixel with 0
+                    colors[i] = int(pix_bin[:-replace_bits] + '0' * replace_bits, 2)
                 i += 1
             image.putpixel((x, y), tuple(colors))
     image.save('new.png')
@@ -61,9 +65,9 @@ def decode(image):
     pixels = image.load()
     for x in range(0, image.x):
         for y in range(0, image.y):
-            # append data from the image with the last bit of each color channel
+            # append data from the image with the last bits of each color channel
             for channel in pixels[x, y]:
-                text_ += bin(channel)[-1:]
+                text_ += bin(channel)[-replace_bits:]
 
     for x in range(0, len(text_), 8):
         # keep appending data bit until zeroes are found
