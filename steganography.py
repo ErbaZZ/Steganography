@@ -95,13 +95,9 @@ def decode(image):
 # print 'Number is: ', len(sys.argv), 'arguments.'
 # print 'Argument list: ', str(sys.argv)
 
-# Initialization
-plaintext = ''
-input_image = ''
-output = ''
-
 # Encode
 if sys.argv[1] == '-e':
+    plaintext = ''
     # Get text from file
     if sys.argv[2] == '-f':
         textfile = open(sys.argv[3],'r')
