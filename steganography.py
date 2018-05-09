@@ -1,4 +1,5 @@
 import binascii
+import sys
 
 from PIL import Image
 
@@ -26,7 +27,7 @@ def int_to_bytes(i):
 #       - Encode + decode input to accommodate longer input?
 #       - Other
 
-def encode(plaintext, image):
+def encode(plaintext, image, outimage):
     # convert plain text to the binary format
     text_bin = text_to_bits(plaintext)
     print(text_bin)
@@ -53,7 +54,7 @@ def encode(plaintext, image):
                     colors[i] = int(pix_bin[:-replace_bits] + '0' * replace_bits, 2)
                 i += 1
             image.putpixel((x, y), tuple(colors))
-    image.save('new.png')
+    image.save(outimage)
     return
 
 
@@ -78,21 +79,70 @@ def decode(image):
             break
     # convert data bit to plain text
     decoded_text = text_from_bits(decoded_text)
-    print(decoded_text)
     return decoded_text
 
 
 #   TODO: Accept CLI arguments
-#       1) python steganography.py -e <plaintext> <raw image filename> <encoded image filename>
-#       2) python steganography.py -e -f <plaintext filename> <raw image filename> <encoded image filename>
-#       3) python steganography.py -d <encoded image filename>                                                  # Print output text to console
-#       4) python steganography.py -d -f <encoded image filename> <output text filename>                        # Save output to file
+#       1) python steganography.py -e -p <plaintext> -i <input-image> -o <output-image>
+#       2) python steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>
+#       3) python steganography.py -d -i <input-encoded-image>                                                  # Print output text to console
+#       4) python steganography.py -d -i <input-encoded-image> -o <output-text-file>                            # Save output to file
 #   Extra:
 #       1) Check image file extension to be only .png and .bmp
 #       2) Show warning and instruction when invalid argument pattern is detected
 
-text = "Hello World! This is the test of Steganography program."
-img = Image.open('lena.png', 'r')
-encode(text, img)
-new = Image.open('new.png', 'r')
-decode(new)
+#print 'Number is: ', len(sys.argv), 'arguments.'
+#print 'Argument list: ', str(sys.argv)
+
+#declare variable
+plaintext = ''
+input_image = ''
+output = ''
+#encode
+if sys.argv[1] == '-e':
+    #get text from file
+    if sys.argv[2] == '-f':
+        file = open(sys.argv[3],'r')
+        for line in file:
+            plaintext = plaintext + line + '\n'
+
+    elif sys.argv[2] == '-p':
+        plaintext = sys.argv[3]
+
+    #check input
+    for i in range(len(sys.argv)):
+        if sys.argv[i] == '-i':
+            input_image = sys.argv[i+1]
+
+    #check output
+    for j in range(len(sys.argv)):
+        if sys.argv[j] == '-o':
+            output = sys.argv[j+1]
+
+    img = Image.open(input_image, 'r')
+    encode(plaintext, img, output)
+          
+#decode
+elif sys.argv[1] == '-d':
+    #check input
+    for i in range(len(sys.argv)):
+        if sys.argv[i] == '-i':
+            input_image = sys.argv[i+1]
+
+    img = Image.open(input_image, 'r')
+    print decode(img)
+
+    #check output
+    for j in range(len(sys.argv)):
+        if sys.argv[i] == '-o':
+            output = sys.argv[j+1]
+            f = open(output,"w+")
+            f.write(decode(img))
+
+    
+
+#text = "Hello World! This is the test of Steganography program."
+#img = Image.open(imgName, 'r')
+#encode(text, img)
+#new = Image.open('new.png', 'r')
+#decode(new)
