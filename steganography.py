@@ -28,9 +28,9 @@ def int_to_bytes(i):
 #       - Other
 
 def encode(plaintext, image, outimage):
-    # convert plain text to the binary format
+    # Convert plaintext to the binary format
     text_bin = text_to_bits(plaintext)
-    print(text_bin)
+    # print(text_bin)
     text_size = len(text_bin)
     count = 0
     image.x = image.size[0]
@@ -43,18 +43,19 @@ def encode(plaintext, image, outimage):
             for channel in pixels[x, y]:
                 pix_bin = bin(channel)
                 if count < text_size:
-                    # replace the last bits of the target pixel with the data bit
+                    # Replace the last bits of the target pixel with the data bit
                     data_bits = ''
                     for j in range(0, replace_bits):
                         data_bits += text_bin[count] if count < text_size else '0'
                         count += 1
                     colors[i] = int(pix_bin[:-replace_bits] + data_bits, 2)
                 else:
-                    # replace the last bits of the target pixel with 0
+                    # Replace the last bits of the target pixel with 0
                     colors[i] = int(pix_bin[:-replace_bits] + '0' * replace_bits, 2)
                 i += 1
             image.putpixel((x, y), tuple(colors))
     image.save(outimage)
+    print('Image encoded!')
     return
 
 
@@ -66,18 +67,18 @@ def decode(image):
     pixels = image.load()
     for x in range(0, image.x):
         for y in range(0, image.y):
-            # append data from the image with the last bits of each color channel
+            # Append data from the image with the last bits of each color channel
             for channel in pixels[x, y]:
                 text_ += bin(channel)[-replace_bits:]
 
     for x in range(0, len(text_), 8):
-        # keep appending data bits until zeroes are found
+        # Keep appending data bits until zeroes are found
         char_bin = text_[x:x + 8]
         if char_bin != '00000000':
             decoded_text += char_bin
         else:
             break
-    # convert data bit to plain text
+    # Convert data bit to plaintext
     decoded_text = text_from_bits(decoded_text)
     return decoded_text
 
@@ -91,58 +92,52 @@ def decode(image):
 #       1) Check image file extension to be only .png and .bmp
 #       2) Show warning and instruction when invalid argument pattern is detected
 
-#print 'Number is: ', len(sys.argv), 'arguments.'
-#print 'Argument list: ', str(sys.argv)
+# print 'Number is: ', len(sys.argv), 'arguments.'
+# print 'Argument list: ', str(sys.argv)
 
-#declare variable
+# Initialization
 plaintext = ''
 input_image = ''
 output = ''
-#encode
-if sys.argv[1] == '-e':
-    #get text from file
-    if sys.argv[2] == '-f':
-        file = open(sys.argv[3],'r')
-        for line in file:
-            plaintext = plaintext + line + '\n'
 
+# Encode
+if sys.argv[1] == '-e':
+    # Get text from file
+    if sys.argv[2] == '-f':
+        textfile = open(sys.argv[3],'r')
+        for line in textfile:
+            plaintext = plaintext + line
+    # Get plaintext from cli argument
     elif sys.argv[2] == '-p':
         plaintext = sys.argv[3]
 
-    #check input
     for i in range(len(sys.argv)):
+        # Check input
         if sys.argv[i] == '-i':
             input_image = sys.argv[i+1]
-
-    #check output
-    for j in range(len(sys.argv)):
-        if sys.argv[j] == '-o':
-            output = sys.argv[j+1]
+        # Check output
+        if sys.argv[i] == '-o':
+            output = sys.argv[i+1]
 
     img = Image.open(input_image, 'r')
     encode(plaintext, img, output)
           
-#decode
+# Decode
 elif sys.argv[1] == '-d':
-    #check input
+    outflag = False
     for i in range(len(sys.argv)):
+        # Check input
         if sys.argv[i] == '-i':
             input_image = sys.argv[i+1]
+        # Check output
+        if sys.argv[i] == '-o':
+            outflag = True
+            output = sys.argv[i+1]
+            f = open(output,"w+")
 
     img = Image.open(input_image, 'r')
-    print decode(img)
-
-    #check output
-    for j in range(len(sys.argv)):
-        if sys.argv[i] == '-o':
-            output = sys.argv[j+1]
-            f = open(output,"w+")
-            f.write(decode(img))
-
-    
-
-#text = "Hello World! This is the test of Steganography program."
-#img = Image.open(imgName, 'r')
-#encode(text, img)
-#new = Image.open('new.png', 'r')
-#decode(new)
+    outtext = decode(img)
+    print(outtext)
+    if outflag:
+        f.write(outtext)
+        print('Text saved in a file!')
