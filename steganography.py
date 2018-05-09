@@ -97,6 +97,13 @@ def decode(image):
 
 # Encode
 if sys.argv[1] == '-e':
+    if len(sys.argv) != 8:
+        print('Invalid argument! Please use one of the following formats:')
+        print('\tpython steganography.py -e -p <plaintext> -i <input-image> -o <output-image>')
+        print('\tpython steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>')
+        print('\tpython steganography.py -d -i <input-encoded-image>')
+        print('\tpython steganography.py -d -i <input-encoded-image> -o <output-text-file>')
+        exit()
     plaintext = ''
     # Get text from file
     if sys.argv[2] == '-f':
@@ -120,6 +127,13 @@ if sys.argv[1] == '-e':
           
 # Decode
 elif sys.argv[1] == '-d':
+    if len(sys.argv) != 4 and len(sys.argv) != 6:
+        print('Invalid argument! Please use one of the following formats:')
+        print('\tpython steganography.py -e -p <plaintext> -i <input-image> -o <output-image>')
+        print('\tpython steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>')
+        print('\tpython steganography.py -d -i <input-encoded-image>')
+        print('\tpython steganography.py -d -i <input-encoded-image> -o <output-text-file>')
+        exit()
     outflag = False
     for i in range(len(sys.argv)):
         # Check input
@@ -137,3 +151,11 @@ elif sys.argv[1] == '-d':
     if outflag:
         f.write(outtext)
         print('Text saved in a file!')
+
+else:
+    print('Invalid argument! Please use one of the following formats:')
+    print('\tpython steganography.py -e -p <plaintext> -i <input-image> -o <output-image>')
+    print('\tpython steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>')
+    print('\tpython steganography.py -d -i <input-encoded-image>')
+    print('\tpython steganography.py -d -i <input-encoded-image> -o <output-text-file>')
+    exit()
