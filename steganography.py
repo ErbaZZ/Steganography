@@ -107,7 +107,7 @@ if sys.argv[1] == '-e':
     plaintext = ''
     # Get text from file
     if sys.argv[2] == '-f':
-        textfile = open(sys.argv[3],'r')
+        textfile = open(sys.argv[3], 'r')
         for line in textfile:
             plaintext = plaintext + line
     # Get plaintext from cli argument
@@ -117,14 +117,14 @@ if sys.argv[1] == '-e':
     for i in range(len(sys.argv)):
         # Check input
         if sys.argv[i] == '-i':
-            input_image = sys.argv[i+1]
+            input_image = sys.argv[i + 1]
         # Check output
         if sys.argv[i] == '-o':
-            output = sys.argv[i+1]
+            output = sys.argv[i + 1]
 
     img = Image.open(input_image, 'r')
     encode(plaintext, img, output)
-          
+
 # Decode
 elif sys.argv[1] == '-d':
     if len(sys.argv) != 4 and len(sys.argv) != 6:
@@ -138,12 +138,12 @@ elif sys.argv[1] == '-d':
     for i in range(len(sys.argv)):
         # Check input
         if sys.argv[i] == '-i':
-            input_image = sys.argv[i+1]
+            input_image = sys.argv[i + 1]
         # Check output
         if sys.argv[i] == '-o':
             outflag = True
-            output = sys.argv[i+1]
-            f = open(output,"w+")
+            output = sys.argv[i + 1]
+            f = open(output, "w+")
 
     img = Image.open(input_image, 'r')
     outtext = decode(img)
