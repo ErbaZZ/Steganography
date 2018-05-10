@@ -83,11 +83,20 @@ def decode(image):
     return decoded_text
 
 
+def print_usage():
+    print('Invalid argument! Please use one of the following formats:')
+    print('\tpython steganography.py -e -p <plaintext> -i <input-image> -o <output-image> [-b <replace-bits>]')
+    print('\tpython steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image> [-b <replace-bits>]')
+    print('\tpython steganography.py -d -i <input-encoded-image> [-b <replace-bits>]')
+    print('\tpython steganography.py -d -i <input-encoded-image> -o <output-text-file> [-b <replace-bits>]')
+    exit()
+
+
 #   TODO: Accept CLI arguments
-#       1) python steganography.py -e -p <plaintext> -i <input-image> -o <output-image>
-#       2) python steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>
-#       3) python steganography.py -d -i <input-encoded-image>                                                  # Print output text to console
-#       4) python steganography.py -d -i <input-encoded-image> -o <output-text-file>                            # Save output to file
+#       1) python steganography.py -e -p <plaintext> -i <input-image> -o <output-image> [-b 1]
+#       2) python steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image> [-b 1]
+#       3) python steganography.py -d -i <input-encoded-image> [-b 1]                                   # Print output text to console
+#       4) python steganography.py -d -i <input-encoded-image> -o <output-text-file> [-b 1]             # Save output to file
 #   Extra:
 #       1) Check image file extension to be only .png and .bmp
 #       2) Show warning and instruction when invalid argument pattern is detected
@@ -96,14 +105,11 @@ def decode(image):
 # print 'Argument list: ', str(sys.argv)
 
 # Encode
-if sys.argv[1] == '-e':
-    if len(sys.argv) != 8:
-        print('Invalid argument! Please use one of the following formats:')
-        print('\tpython steganography.py -e -p <plaintext> -i <input-image> -o <output-image>')
-        print('\tpython steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>')
-        print('\tpython steganography.py -d -i <input-encoded-image>')
-        print('\tpython steganography.py -d -i <input-encoded-image> -o <output-text-file>')
-        exit()
+if len(sys.argv) <= 1:
+    print_usage()
+elif sys.argv[1] == '-e':
+    if len(sys.argv) != 8 and len(sys.argv) != 10:
+        print_usage()
     plaintext = ''
     # Get text from file
     if sys.argv[2] == '-f':
@@ -121,19 +127,17 @@ if sys.argv[1] == '-e':
         # Check output
         if sys.argv[i] == '-o':
             output = sys.argv[i + 1]
+        # Check replace bits
+        if sys.argv[i] == '-b':
+            replace_bits = int(sys.argv[i + 1])
 
     img = Image.open(input_image, 'r')
     encode(plaintext, img, output)
 
 # Decode
 elif sys.argv[1] == '-d':
-    if len(sys.argv) != 4 and len(sys.argv) != 6:
-        print('Invalid argument! Please use one of the following formats:')
-        print('\tpython steganography.py -e -p <plaintext> -i <input-image> -o <output-image>')
-        print('\tpython steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>')
-        print('\tpython steganography.py -d -i <input-encoded-image>')
-        print('\tpython steganography.py -d -i <input-encoded-image> -o <output-text-file>')
-        exit()
+    if len(sys.argv) != 6 and len(sys.argv) != 8:
+        print_usage()
     outflag = False
     for i in range(len(sys.argv)):
         # Check input
@@ -144,6 +148,9 @@ elif sys.argv[1] == '-d':
             outflag = True
             output = sys.argv[i + 1]
             f = open(output, "w+")
+        # Check replace bits
+        if sys.argv[i] == '-b':
+            replace_bits = int(sys.argv[i + 1])
 
     img = Image.open(input_image, 'r')
     outtext = decode(img)
@@ -153,9 +160,4 @@ elif sys.argv[1] == '-d':
         print('Text saved in a file!')
 
 else:
-    print('Invalid argument! Please use one of the following formats:')
-    print('\tpython steganography.py -e -p <plaintext> -i <input-image> -o <output-image>')
-    print('\tpython steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>')
-    print('\tpython steganography.py -d -i <input-encoded-image>')
-    print('\tpython steganography.py -d -i <input-encoded-image> -o <output-text-file>')
-    exit()
+    print_usage()
