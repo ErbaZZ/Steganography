@@ -3,6 +3,7 @@ import sys
 
 from PIL import Image
 
+
 # Functions from https://stackoverflow.com/questions/7396849/convert-binary-to-ascii-and-vice-versa
 def text_to_bits(plaintext, encoding='utf-8', errors='surrogatepass'):
     bits = bin(int(binascii.hexlify(plaintext.encode(encoding, errors)), 16))[2:]
@@ -49,13 +50,13 @@ def encode(plaintext, image, outimage):
                     pix_bin = bin(channel)
                     if count < text_size:
                         # Replace the bit of the target pixel with the data bit
-                        colors[i] = int(pix_bin[:-sub_position] + text_bin[count] + pix_bin[len(pix_bin)+1-sub_position:], 2)
+                        colors[i] = int(pix_bin[:-sub_position] + text_bin[count] + pix_bin[len(pix_bin) + 1 - sub_position:], 2)
                         count += 1
                     else:
                         # Replace the bit of the target pixel with 0
-                        colors[i] = int(pix_bin[:-sub_position] + '0' + pix_bin[len(pix_bin)+1-sub_position:], 2)
+                        colors[i] = int(pix_bin[:-sub_position] + '0' + pix_bin[len(pix_bin) + 1 - sub_position:], 2)
                         endencode += 1
-                    
+
                     i += 1
                 image.putpixel((x, y), tuple(colors))
     image.save(outimage)
@@ -81,7 +82,7 @@ def decode(image):
                     break
                 # Append data from the image with the bits of each color channel
                 for channel in pixels[x, y]:
-                    bit = bin(channel)[len(bin(channel))-1-pos:len(bin(channel))-pos]
+                    bit = bin(channel)[len(bin(channel)) - 1 - pos:len(bin(channel)) - pos]
                     text_bin += bit
                     if str(bit) == '0':
                         enddecode += 1
@@ -102,10 +103,10 @@ def decode(image):
 
 def print_usage():
     print('Invalid argument! Please use one of the following formats:')
-    print('\tpython steganography.py -e -p <plaintext> -i <input-image> -o <output-image> [-b <replace-bits>]')
-    print('\tpython steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image> [-b <replace-bits>]')
-    print('\tpython steganography.py -d -i <input-encoded-image> [-b <replace-bits>]')
-    print('\tpython steganography.py -d -i <input-encoded-image> -o <output-text-file> [-b <replace-bits>]')
+    print('\tpython steganography.py -e -p <plaintext> -i <input-image> -o <output-image>')
+    print('\tpython steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>')
+    print('\tpython steganography.py -d -i <input-encoded-image>')
+    print('\tpython steganography.py -d -i <input-encoded-image> -o <output-text-file>')
     exit()
 
 
@@ -125,7 +126,7 @@ def print_usage():
 if len(sys.argv) <= 1:
     print_usage()
 elif sys.argv[1] == '-e':
-    if len(sys.argv) != 8 and len(sys.argv) != 10:
+    if len(sys.argv) != 8:
         print_usage()
     plaintext = ''
     # Get text from file
@@ -150,7 +151,7 @@ elif sys.argv[1] == '-e':
 
 # Decode
 elif sys.argv[1] == '-d':
-    if len(sys.argv) != 6 and len(sys.argv) != 8:
+    if len(sys.argv) != 4 and len(sys.argv) != 6:
         print_usage()
     outflag = False
     for i in range(len(sys.argv)):
