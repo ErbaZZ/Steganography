@@ -5,12 +5,12 @@ from PIL import Image
 
 
 # Functions from https://stackoverflow.com/questions/7396849/convert-binary-to-ascii-and-vice-versa
-def text_to_bits(plaintext, encoding='utf-8', errors='surrogatepass'):
+def text_to_bits(plaintext, encoding='utf-8', errors='strict'):
     bits = bin(int(binascii.hexlify(plaintext.encode(encoding, errors)), 16))[2:]
     return bits.zfill(8 * ((len(bits) + 7) // 8))
 
 
-def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):
+def text_from_bits(bits, encoding='utf-8', errors='strict'):
     n = int(bits, 2)
     return int_to_bytes(n).decode(encoding, errors)
 
@@ -47,14 +47,14 @@ def encode(plaintext, image, outimage):
                 i = 0
                 colors = [0] * 3
                 for channel in pixels[x, y]:
-                    pix_bin = bin(channel)
+                    pix_bin = bin(channel)[2:].zfill(8)
                     if count < text_size:
                         # Replace the bit of the target pixel with the data bit
-                        colors[i] = int(pix_bin[:-sub_position] + text_bin[count] + pix_bin[len(pix_bin) + 1 - sub_position:], 2)
+                        colors[i] = int(pix_bin[:-sub_position] + text_bin[count] + pix_bin[9 - sub_position:], 2)
                         count += 1
                     else:
                         # Replace the bit of the target pixel with 0
-                        colors[i] = int(pix_bin[:-sub_position] + '0' + pix_bin[len(pix_bin) + 1 - sub_position:], 2)
+                        colors[i] = int(pix_bin[:-sub_position] + '0' + pix_bin[9 - sub_position:], 2)
                         endencode += 1
 
                     i += 1
@@ -82,7 +82,7 @@ def decode(image):
                     break
                 # Append data from the image with the bits of each color channel
                 for channel in pixels[x, y]:
-                    bit = bin(channel)[len(bin(channel)) - 1 - pos:len(bin(channel)) - pos]
+                    bit = bin(channel)[2:].zfill(8)[7 - pos:8 - pos]
                     text_bin += bit
                     if str(bit) == '0':
                         enddecode += 1
