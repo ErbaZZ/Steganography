@@ -165,10 +165,12 @@ elif sys.argv[1] == '-d':
 
     img = Image.open(input_image, 'r')
     outtext = decode(img)
-    print(outtext)
+
     if outflag:
         f.write(outtext)
         print('Text saved in a file!')
+    else:
+        print(outtext)
 
 else:
     print_usage()
