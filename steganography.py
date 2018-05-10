@@ -72,13 +72,13 @@ def decode(image):
     pixels = image.load()
     enddecode = 0
     for pos in range(0, 8):
-        if enddecode >= 15:
+        if enddecode >= 8 and len(text_bin) % 8 == 0:
             break
         for x in range(0, image.x):
-            if enddecode >= 15:
+            if enddecode >= 8 and len(text_bin) % 8 == 0:
                 break
             for y in range(0, image.y):
-                if enddecode >= 15:
+                if enddecode >= 8 and len(text_bin) % 8 == 0:
                     break
                 # Append data from the image with the bits of each color channel
                 for channel in pixels[x, y]:
