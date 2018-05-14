@@ -1,29 +1,22 @@
-import binascii
 import sys
-
 from PIL import Image
 
-
 # Functions from https://stackoverflow.com/questions/7396849/convert-binary-to-ascii-and-vice-versa
-def text_to_bits(plaintext, encoding='utf-8', errors='strict'):
-    bits = bin(int(binascii.hexlify(plaintext.encode(encoding, errors)), 16))[2:]
+def text_to_bits(text, encoding='utf-8', errors='surrogatepass'):
+    bits = bin(int.from_bytes(text.encode(encoding, errors), 'big'))[2:]
     return bits.zfill(8 * ((len(bits) + 7) // 8))
 
-
-def text_from_bits(bits, encoding='utf-8', errors='strict'):
+def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):
     n = int(bits, 2)
-    return int_to_bytes(n).decode(encoding, errors)
+    return n.to_bytes((n.bit_length() + 7) // 8, 'big').decode(encoding, errors) or '\0'
 
-
-def int_to_bytes(i):
-    hex_string = '%x' % i
-    n = len(hex_string)
-    return binascii.unhexlify(hex_string.zfill(n + (n & 1)))
-
-
-#   TODO: Improved data hiding algorithm for longer text
-#       - Encode + decode input to accommodate longer input?
-#       - Other
+def print_usage():
+    print('Invalid argument! Please use one of the following formats:')
+    print('\tpython steganography.py -e -p <plaintext> -i <input-image> -o <output-image>')
+    print('\tpython steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>')
+    print('\tpython steganography.py -d -i <input-encoded-image>')
+    print('\tpython steganography.py -d -i <input-encoded-image> -o <output-text-file>')
+    exit()
 
 def encode(plaintext, image, outimage):
     # Convert plaintext to the binary format
@@ -63,7 +56,6 @@ def encode(plaintext, image, outimage):
     print('Image encoded!')
     return
 
-
 def decode(image):
     text_bin = ''
     decoded_text = ''
@@ -99,28 +91,6 @@ def decode(image):
     # Convert data bit to plaintext
     decoded_text = text_from_bits(decoded_text)
     return decoded_text
-
-
-def print_usage():
-    print('Invalid argument! Please use one of the following formats:')
-    print('\tpython steganography.py -e -p <plaintext> -i <input-image> -o <output-image>')
-    print('\tpython steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>')
-    print('\tpython steganography.py -d -i <input-encoded-image>')
-    print('\tpython steganography.py -d -i <input-encoded-image> -o <output-text-file>')
-    exit()
-
-
-#   TODO: Accept CLI arguments
-#       1) python steganography.py -e -p <plaintext> -i <input-image> -o <output-image>
-#       2) python steganography.py -e -f <plaintext-file> -i <input-image> -o <output-image>
-#       3) python steganography.py -d -i <input-encoded-image>                                      # Print output text to console
-#       4) python steganography.py -d -i <input-encoded-image> -o <output-text-file>                # Save output to file
-#   Extra:
-#       1) Check image file extension to be only .png and .bmp
-#       2) Show warning and instruction when invalid argument pattern is detected
-
-# print 'Number is: ', len(sys.argv), 'arguments.'
-# print 'Argument list: ', str(sys.argv)
 
 # Encode
 if len(sys.argv) <= 1:
