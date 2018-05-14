@@ -2,7 +2,7 @@
 
 This script performs steganography to hide plaintext inside a Bitmap or PNG image by converting plaintext into a long string of bits, and hide those bits in the least significant bits of the color channels of the image.
 
-![Original Image](/lena.png) ![Encoded Image](/encoded.png)
+<img src="lena.png" title="Original Image" width="400"> <img src="encoded.png" title="Encoded Image" width="400">
 
 The image on the left is the original image, and the image on the right is the encoded image which contains ~300,000 bytes of text hidden inside generated with the script.
 
