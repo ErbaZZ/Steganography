@@ -45,7 +45,7 @@ Install Pillow
 sudo pip install Pillow
 ```
 
-## Running the tests
+## Running
 
 The script can be run in the directory with the script file using one of the following patterns
 
