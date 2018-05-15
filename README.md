@@ -42,7 +42,7 @@ Install Python
 
 Install Pillow
 ```
-sudo pip install Pillow
+pip install Pillow
 ```
 
 ## Running
