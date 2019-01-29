@@ -94,4 +94,4 @@ Text saved in a file!
 
 * **Weerawat Pawanawiwat** - [ErbaZZ](https://github.com/ErbaZZ)
 * **Thatchapon Unprasert** - [PoomSmart](https://github.com/PoomSmart)
-* **Dawit Chusetthagarn** - [jeeperror](https://github.com/jeeperror)
+* **Dawit Chusetthagarn** - [dawit-chu](https://github.com/dawit-chu)
